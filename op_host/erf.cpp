@@ -1,7 +1,7 @@
 // Host侧Tiling实现
 #include "register/op_def_registry.h"
 #include "tiling/platform/platform_ascendc.h"
-
+#include "graph/utils/type_utils.h"
 #include "../op_kernel/erf_tiling.h"
 // #include "../op_kernel/tiling_key_erf.h"
 
@@ -9,7 +9,7 @@ namespace optiling {
     static ge::graphStatus TilingFunc(gert::TilingContext *context) {
         // 获取平台信息
         auto platform = platform_ascendc::PlatformAscendC(context->GetPlatformInfo());
-        int32_t coreNum = platform.GetCoreNumAiv();
+        uint32_t coreNum = static_cast<uint32_t>(platform.GetCoreNumAiv());
 
         // 获取算子输入信息
         uint32_t inputNum = context->GetInputShape(0)->GetStorageShape().GetShapeSize();
