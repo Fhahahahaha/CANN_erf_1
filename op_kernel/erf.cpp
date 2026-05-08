@@ -1,7 +1,7 @@
 // Kernel侧核函数实现 (透传模式: y = x)
 #include "kernel_operator.h"
 #include "erf_tiling.h"
-// #include "tiling_key_erf.h"
+#include "tiling_key_erf.h"
 
 // constexpr int32_t BUFFER_NUM = 2;
 constexpr int32_t BUFFER_NUM = 1;
@@ -94,15 +94,15 @@ private:
     uint32_t processDataNum;
 };
 
-template <typename DT_X>
  __global__ __aicore__ void erf(GM_ADDR x, GM_ADDR y, GM_ADDR workspace, GM_ADDR tiling) {
     REGISTER_TILING_DEFAULT(ErfTilingData);
     GET_TILING_DATA_WITH_STRUCT(ErfTilingData, tiling_data, tiling);
-    KernelErf<DT_X> op;
-    op.Init(x, y, tiling_data.smallCoreDataNum, 
-            tiling_data.bigCoreDataNum, tiling_data.finalBigTileNum, 
-            tiling_data.finalSmallTileNum, tiling_data.tileDataNum, 
-            tiling_data.smallTailDataNum, tiling_data.bigTailDataNum, 
+    KernelErf<DTYPE_X> op;
+    op.Init(x, y, workspace,
+            tiling_data.smallCoreDataNum,
+            tiling_data.bigCoreDataNum, tiling_data.finalBigTileNum,
+            tiling_data.finalSmallTileNum, tiling_data.tileDataNum,
+            tiling_data.smallTailDataNum, tiling_data.bigTailDataNum,
             tiling_data.tailBlockNum);
     op.Process();
 }

@@ -3,7 +3,7 @@
 #include "tiling/platform/platform_ascendc.h"
 #include "graph/utils/type_utils.h"
 #include "../op_kernel/erf_tiling.h"
-// #include "../op_kernel/tiling_key_erf.h"
+#include "../op_kernel/tiling_key_erf.h"
 
 namespace optiling {
     static ge::graphStatus TilingFunc(gert::TilingContext *context) {
@@ -17,9 +17,9 @@ namespace optiling {
         ge::TypeUtils::GetDataTypeLength(context->GetInputDesc(0)->GetDataType(), typeLength);
         uint32_t inputLength = inputNum * typeLength;
     
-        // // 配置tiling key, 实现kernel侧不同数据类型的区分
-        // uint32_t DT_X = static_cast<uint32_t>(dtype_x);
-        // ASCENDC_TPL_SEL_PARAM(context, DT_X);
+        // 配置tiling key (bypass: 仅float, 不做多分支区分)
+        uint32_t DT_X = static_cast<uint32_t>(context->GetInputDesc(0)->GetDataType());
+        ASCENDC_TPL_SEL_PARAM(context, DT_X);
 
         /* 首先对齐到32B */
         const uint32_t BLOCK_SIZE = 32;
